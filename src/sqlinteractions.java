@@ -2,49 +2,121 @@ import java.sql.*;
 
 public class sqlinteractions {
 
+    private Connection con = null;
+    public String game = "vncontent.db";
+
     // create a connection to the database
     private Connection connect() {
         // SQLite connection string
-        String url = "jdbc:sqlite:vncontent.db";
-        Connection conn = null;
+        String url = "jdbc:sqlite:../" + game;
         try {
-            conn = DriverManager.getConnection(url);
+            con = DriverManager.getConnection(url);
         } catch (SQLException e) {
             System.out.println("Connection to database failed: " + e.getMessage());
         }
-        return conn;
+        return con;
     }
 
-    // select from database
-    public void select() {
-        String sql = "SELECT " + " FROM " ;
+    // select things from the story table from database
+    public String selectstory(int nr, String what) {
 
-        try (Connection conn = this.connect();
-             Statement stmt  = conn.createStatement();
-             ResultSet rs    = stmt.executeQuery(sql)){
+        String result = "";
+        Statement st = null;
+        ResultSet rs = null;
+        String sql = "SELECT charid1, charid2, dialog, bgid, nextnr FROM story WHERE nr = " + nr;
 
-            // loop through the result set
-            while (rs.next()) {
-                System.out.println(rs.getInt("id") +  "\t" +
-                        rs.getString("name") + "\t" +
-                        rs.getDouble("capacity"));
+        try {
+            if (con == null) {
+                connect();
             }
+            st = con.createStatement();
+            rs = st.executeQuery(sql);
+
+            // what do you need?
+            if (what.equalsIgnoreCase("dialog")){
+                result = rs.getString("dialog");
+            }
+            else if (what.equalsIgnoreCase("nextnr")){
+                result = rs.getString("nextnr");
+            }
+            else if (what.equalsIgnoreCase("charid1")){
+                result = rs.getString("charid1");
+            }
+            else if (what.equalsIgnoreCase("charid2")){
+                result = rs.getString("charid2");
+            }
+            else if (what.equalsIgnoreCase("bgid")){
+                result = rs.getString("bgid");
+            }
+
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Selecting story text failed: " + e.getMessage());
+        } finally {
+            try {
+                // close all db connections
+                if (con != null) {
+                    con.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println("Closing connection failed: " + ex.getMessage());
+            }
         }
+        return result;
     }
 
-    // insert into database
-    public void insert() {
+    // select things from the story table from database
+    public String selectmeta(String what) {
 
+        String result = "";
+        Statement st = null;
+        ResultSet rs = null;
+        String sql = "SELECT * FROM meta";
+
+        try {
+            if (con == null) {
+                connect();
+            }
+            st = con.createStatement();
+            rs = st.executeQuery(sql);
+
+            // what do you need?
+            if (what.equalsIgnoreCase("name")){
+                result = rs.getString("name");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Selecting meta things failed: " + e.getMessage());
+        } finally {
+            try {
+                // close all db connections
+                if (con != null) {
+                    con.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println("Closing connection failed: " + ex.getMessage());
+            }
+        }
+        return result;
     }
 
     // delete from database
-    public void delete() {
-        String sql = "DELETE FROM " + " WHERE id = ?";
+    public void delete(String table, int id) {
+        String sql = "DELETE FROM " + table + " WHERE id = " + id;
 
-        try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection con = this.connect();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
 
             // set the corresponding param
             pstmt.setInt(1, id);
