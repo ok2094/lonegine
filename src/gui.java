@@ -25,19 +25,29 @@ public class gui extends JFrame implements ActionListener {
 
         }
         else {
-            
+            bStart.addActionListener(this);
+            bEditor.addActionListener(this);
+            bInfo.addActionListener(this);
         }
 
         this.setVisible(true);
     }
 
+	// button clicks
     public void actionPerformed(ActionEvent e) {
-
+		if(e.getSource() == this.bStart){
+            g.start();
+        }
+        else if(e.getSource() == this.bEditor){
+            infobox("Sorry", "The editor is not available yet.");
+        }
+        else if (e.getSource() == this.bInfo){
+            infobox("Info", "lonegine (lonely engine) visual novel engine developed by Jen Stehlik. version: " + ver);
+        }
     }
     
 	// Infobox for credits and stuff
-	// infobox("lonegine: visual novel engine developed by Jen Stehlik. version: " + ver, "Info");
-    public static void infoBox(String infoMessage, String titleBar)
+    public static void infoBox(String titleBar, String infoMessage)
     {
         JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.INFORMATION_MESSAGE);
     }
