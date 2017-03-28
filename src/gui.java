@@ -34,4 +34,11 @@ public class gui extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
     }
+    
+	// Infobox for credits and stuff
+	// infobox("lonegine: visual novel engine developed by Jen Stehlik. version: " + ver, "Info");
+    public static void infoBox(String infoMessage, String titleBar)
+    {
+        JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.INFORMATION_MESSAGE);
+    }
 }

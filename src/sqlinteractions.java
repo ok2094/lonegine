@@ -3,7 +3,7 @@ import java.sql.*;
 public class sqlinteractions {
 
     private Connection con = null;
-    public String game = "vncontent.db";
+    public String game = "test.vn";
 
     // create a connection to the database
     private Connection connect() {
