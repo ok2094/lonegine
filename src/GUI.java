@@ -2,12 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class GUI extends JFrame implements ActionListener {
+public class GUI extends JFrame implements ActionListener{
 
+    Game g = new Game();
     SQLinteractions sql = new SQLinteractions();
 
-    double ver = 0.01;
-    boolean ingame = false;
+    private double ver = 0.01;
+    private boolean ingame = false;
 
     // Buttons
     private JButton bStart,
@@ -24,10 +25,11 @@ public class GUI extends JFrame implements ActionListener {
 
     // common GUI
     public GUI(){
-        this.setTitle(sql.selectmeta("name"));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(960, 720);
+        this.setResizable(false);
         this.setLocationRelativeTo(null);
+        this.setLayout(null);
         this.getContentPane().setBackground(Color.pink);
 
         // create menu buttons
@@ -43,17 +45,24 @@ public class GUI extends JFrame implements ActionListener {
         bInfo.setBounds(600, 400, 200, 100);
         bInfo.addActionListener(this);
 
+        // font
+        Font f = new Font(Font.SANS_SERIF, Font.PLAIN, 25);
+
         // create dialogbox
         tpDialog = new JTextPane();
-        tpDialog.setBounds(50, 50, 850, 200);
-        tpDialog.setForeground(Color.white);
+        tpDialog.setBounds(50, 450, 850, 200);
+        tpDialog.setForeground(Color.BLACK);
+        tpDialog.setBackground(Color.WHITE);
+        tpDialog.setEditable(false);
+        tpDialog.setFont(f);
 
-        bDialog = new JButton ();
-        bDialog.setBounds(50, 50, 850, 200);
+        // button for dialog box
+        bDialog = new JButton ("NEXT");
+        bDialog.setBounds(50, 400, 850, 200);
         bDialog.addActionListener(this);
-        bDialog.setOpaque(false);
-        bDialog.setContentAreaFilled(false);
-        bDialog.setBorderPainted(false);
+        //bDialog.setOpaque(false);
+        //bDialog.setContentAreaFilled(false);
+        //bDialog.setBorderPainted(false);
 
         // name labels
         lChar1 = new JLabel();
@@ -68,6 +77,9 @@ public class GUI extends JFrame implements ActionListener {
     public void ingamegui() {
         // ingame GUI
         if (ingame){
+            // set game name title
+            this.setTitle(g.getgamename());
+
             // remove menu buttons
             this.remove(bStart);
             this.remove(bEditor);
@@ -80,6 +92,8 @@ public class GUI extends JFrame implements ActionListener {
         }
         // menu GUI
         else {
+            // Menu title
+            this.setTitle("lonegine");
             // add all the menu buttons
             this.add(bStart);
             this.add(bEditor);
@@ -87,32 +101,31 @@ public class GUI extends JFrame implements ActionListener {
         }
         // repaint after changing GUI
         this.repaint();
-        //make things visible
+        // make things visible
         this.setVisible(true);
     }
 
 	// button clicks
     public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.bStart){
-            //g.Game();
+		    ingame = true;
+            tpDialog.setText(g.storytext());
+            ingamegui();
         }
         else if(e.getSource() == this.bEditor){
-            infobox("Sorry", "The editor is not available yet.");
+            infobox("Sorry", "The Editor is not available yet.");
         }
         else if (e.getSource() == this.bInfo){
             infobox("Info", "lonegine (lonely engine) visual novel engine developed by Jen Stehlik. version: " + ver);
         }
         else if (e.getSource() == this.bDialog){
-            //g.storytext();
+            tpDialog.setText(g.storytext());
+            lChar1.setText(g.getcharname(1));
         }
-    }
-
-    public void setstory(String story) {
-        tpDialog.setText(story);
     }
 
 	// Infobox for credits and stuff
     public void infobox(String titleBar, String infoMessage) {
-        JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.PLAIN_MESSAGE);
     }
 }
