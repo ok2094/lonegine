@@ -1,3 +1,7 @@
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.sql.*;
 
 public class SQLinteractions {
@@ -111,6 +115,51 @@ public class SQLinteractions {
 
         } catch (SQLException e) {
             System.out.println("Selecting meta things failed: " + e.getMessage());
+        } finally {
+            try {
+                // close db connections
+                if (con != null) {
+                    con.close();
+                    con = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("Closing connection failed: " + ex.getMessage());
+            }
+        }
+        return result;
+    }
+
+    public BufferedImage selectimg(int id, String what) {
+
+        BufferedImage result = null;
+        String sql = "";
+        Statement st;
+        ResultSet rs;
+
+        if (what.equalsIgnoreCase("bg")) {
+            sql = "SELECT bg FROM background WHERE bgid = " + id + ";";
+        }
+        else if (what.equalsIgnoreCase("sprite")) {
+            sql = "SELECT sprite FROM characters WHERE charid = " + id + ";";
+        }
+
+        try {
+            if (con == null) {
+                connect();
+            }
+            st = con.createStatement();
+            rs = st.executeQuery(sql);
+
+            // get image and decode the binary stream
+                InputStream binaryStream = rs.getBinaryStream(what);
+            try {
+                result = ImageIO.read(binaryStream);
+            } catch (IOException exe) {
+                System.out.println("Converting image to BufferedImage failed: " + exe.getMessage());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Selecting images failed: " + e.getMessage());
         } finally {
             try {
                 // close db connections

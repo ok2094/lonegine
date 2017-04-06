@@ -1,27 +1,27 @@
+import javafx.scene.input.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.event.MouseEvent;
 
-public class GUI extends JFrame implements ActionListener{
+public class GUI extends JFrame implements ActionListener, MouseListener {
 
     Game g = new Game();
-    SQLinteractions sql = new SQLinteractions();
 
-    private double ver = 0.01;
+    private double ver = 0.03;
     private boolean ingame = false;
 
     // Buttons
     private JButton bStart,
                     bEditor,
-                    bInfo,
-                    bDialog;
+                    bInfo;
 
     // TextPane
     private JTextPane tpDialog;
 
     // Labels
-    private JLabel  lChar1,
-                    lChar2;
+    private JLabel  lChar1;
 
     // common GUI
     public GUI(){
@@ -34,19 +34,20 @@ public class GUI extends JFrame implements ActionListener{
 
         // create menu buttons
         bStart = new JButton ("Start");
-        bStart.setBounds(200, 400, 200, 100);
+        bStart.setBounds(180, 400, 200, 100);
         bStart.addActionListener(this);
 
         bEditor = new JButton ("Editor");
-        bEditor.setBounds(400, 400, 200, 100);
+        bEditor.setBounds(380, 400, 200, 100);
         bEditor.addActionListener(this);
 
         bInfo = new JButton ("Info");
-        bInfo.setBounds(600, 400, 200, 100);
+        bInfo.setBounds(580, 400, 200, 100);
         bInfo.addActionListener(this);
 
         // font
-        Font f = new Font(Font.SANS_SERIF, Font.PLAIN, 25);
+        Font f1 = new Font(Font.SANS_SERIF, Font.PLAIN, 25);
+        Font f2 = new Font(Font.SANS_SERIF, Font.BOLD, 25);
 
         // create dialogbox
         tpDialog = new JTextPane();
@@ -54,21 +55,15 @@ public class GUI extends JFrame implements ActionListener{
         tpDialog.setForeground(Color.BLACK);
         tpDialog.setBackground(Color.WHITE);
         tpDialog.setEditable(false);
-        tpDialog.setFont(f);
-
-        // button for dialog box
-        bDialog = new JButton ("NEXT");
-        bDialog.setBounds(50, 400, 850, 200);
-        bDialog.addActionListener(this);
-        //bDialog.setOpaque(false);
-        //bDialog.setContentAreaFilled(false);
-        //bDialog.setBorderPainted(false);
+        tpDialog.setFont(f1);
+        tpDialog.setMargin(new Insets(15,20,20,20));
+        tpDialog.addMouseListener(this);
 
         // name labels
         lChar1 = new JLabel();
-        lChar1.setBounds(50, 200, 200, 100);
-
-        lChar2 = new JLabel();
+        lChar1.setBounds(60, 385, 200, 100);
+        lChar1.setFont(f2);
+        lChar1.setForeground(Color.WHITE);
 
         ingamegui();
     }
@@ -87,7 +82,6 @@ public class GUI extends JFrame implements ActionListener{
 
             // add ingame elements
             this.add(tpDialog);
-            this.add(bDialog);
             this.add(lChar1);
         }
         // menu GUI
@@ -109,7 +103,7 @@ public class GUI extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.bStart){
 		    ingame = true;
-            tpDialog.setText(g.storytext());
+		    next();
             ingamegui();
         }
         else if(e.getSource() == this.bEditor){
@@ -118,14 +112,37 @@ public class GUI extends JFrame implements ActionListener{
         else if (e.getSource() == this.bInfo){
             infobox("Info", "lonegine (lonely engine) visual novel engine developed by Jen Stehlik. version: " + ver);
         }
-        else if (e.getSource() == this.bDialog){
-            tpDialog.setText(g.storytext());
-            lChar1.setText(g.getcharname(1));
-        }
     }
 
-	// Infobox for credits and stuff
+    // when clicked on dialogbox
+    public void mouseClicked(MouseEvent e) {
+        next();
+    }
+
+    // load the next "slide"
+    public void next(){
+        tpDialog.setText(g.storytext());
+        lChar1.setText(g.getcharname());
+        this.getContentPane().add(new JLabel(new ImageIcon(g.getimg("bg"))));
+
+        this.repaint();
+    }
+
+    // Infobox for credits and stuff
     public void infobox(String titleBar, String infoMessage) {
         JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.PLAIN_MESSAGE);
+    }
+
+    // not used but needed methods for MouseListener
+    public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
     }
 }
