@@ -7,7 +7,7 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
 
     Game g = new Game();
 
-    private double ver = 0.08;
+    private double ver = 0.09;
     private boolean ingame = false;
 
     // Buttons
@@ -32,7 +32,7 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
         this.setLayout(null);
         this.getContentPane().setBackground(Color.pink);
 
-        // pane
+        // layeredpane for zindex
         layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(960, 720));
         layeredPane.setBounds(0,0,960,720);
@@ -73,8 +73,7 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
 
         // background
         background = new JLabel();
-        background.setBounds(0, 0, 960, 720);
-        background.setLayout(null);
+        background.setBounds(50, 50, 200, 100);
 
         ingamegui();
     }
@@ -92,6 +91,7 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
             layeredPane.remove(bInfo);
 
             // add ingame elements
+            //background with zindex 0 to be behind the buttons // DOESNT WORK FOR SOME REASON!
             layeredPane.add(background,new Integer(0));
             layeredPane.add(tpDialog,new Integer(1));
             layeredPane.add(lChar1,new Integer(1));
@@ -134,6 +134,7 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
 
     // when clicked on dialogbox
     public void mouseClicked(MouseEvent e) {
+        // if end triggered in game
         if (!g.end()) {
             next();
         }
@@ -155,11 +156,6 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
 
         this.repaint();
     }
-
-    //public void paint(Graphics gr) {
-    //    // Draws the img to the BackgroundPanel.
-    //    gr.drawImage(imgBG, 0, 0, null);
-    //}
 
     // Infobox for credits and stuff
     public void infobox(String titleBar, String infoMessage) {

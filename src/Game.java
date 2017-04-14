@@ -53,6 +53,7 @@ public class Game {
 			return result;
 		}
 
+		// count next number of dialog
 		public void nextnr() {
 			int nxtnr;
 			nxtnr = Integer.parseInt(sql.selectstory(nr, "nextnr"));
