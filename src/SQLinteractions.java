@@ -62,12 +62,12 @@ public class SQLinteractions {
     }
 
     // select character
-    public String selectcharacter(int nr, int id, String what) {
+    public String selectcharacter(int id, String what) {
 
         String result = "";
         Statement st;
         ResultSet rs;
-        String sql = "SELECT charid, name FROM story INNER JOIN characters charid WHERE nr = " + nr + " and charid = " + id + ";";
+        String sql = "SELECT charid, name FROM characters WHERE charid = " + id + ";";
 
         try {
             if (con == null) {

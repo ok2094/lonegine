@@ -1,27 +1,27 @@
-import javafx.scene.input.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 public class GUI extends JFrame implements ActionListener, MouseListener {
 
     Game g = new Game();
 
-    private double ver = 0.03;
+    private double ver = 0.05;
     private boolean ingame = false;
 
     // Buttons
-    private JButton bStart,
-                    bEditor,
-                    bInfo;
+    private JButton bStart, bEditor, bInfo;
 
     // TextPane
     private JTextPane tpDialog;
 
     // Labels
-    private JLabel  lChar1;
+    private JLabel lChar1, background;
+
+    // Image
+    private BufferedImage imgBG;
 
     // common GUI
     public GUI(){
@@ -30,7 +30,6 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setLayout(null);
-        this.getContentPane().setBackground(Color.pink);
 
         // create menu buttons
         bStart = new JButton ("Start");
@@ -61,7 +60,7 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
 
         // name labels
         lChar1 = new JLabel();
-        lChar1.setBounds(60, 385, 200, 100);
+        lChar1.setBounds(60, 383, 200, 100);
         lChar1.setFont(f2);
         lChar1.setForeground(Color.WHITE);
 
@@ -81,6 +80,10 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
             this.remove(bInfo);
 
             // add ingame elements
+            //this.add(background);
+            //background.add(tpDialog);
+            //background.add(lChar1);
+
             this.add(tpDialog);
             this.add(lChar1);
         }
@@ -116,16 +119,40 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
 
     // when clicked on dialogbox
     public void mouseClicked(MouseEvent e) {
-        next();
+        if (!g.end()) {
+            next();
+        }
+        else {
+            // switch back to menu
+            // remove ingame components
+            this.remove(background);
+            ingame = false;
+            ingamegui();
+        }
     }
 
     // load the next "slide"
     public void next(){
+        imgBG = g.combineimg();
+        // Background
+        //background = new JLabel(new ImageIcon(g.combineimg()));
+        //background.setBounds(0, 0, 960, 720);
+        //background.setLayout(null);
+
         tpDialog.setText(g.storytext());
         lChar1.setText(g.getcharname());
-        this.getContentPane().add(new JLabel(new ImageIcon(g.getimg("bg"))));
 
         this.repaint();
+    }
+
+    public void paint(Graphics g) {
+        // Draws the img to the BackgroundPanel.
+        if (ingame) {
+            g.drawImage(imgBG, 0, 0, null);
+        }
+        else {
+            this.getContentPane().setBackground(Color.pink);
+        }
     }
 
     // Infobox for credits and stuff
