@@ -2,13 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 
 public class GUI extends JFrame implements ActionListener, MouseListener {
 
     Game g = new Game();
 
-    private double ver = 0.05;
+    private double ver = 0.08;
     private boolean ingame = false;
 
     // Buttons
@@ -20,8 +19,9 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
     // Labels
     private JLabel lChar1, background;
 
-    // Image
-    private BufferedImage imgBG = new BufferedImage(960,720,BufferedImage.TYPE_INT_ARGB);
+    // Pane
+    private JLayeredPane layeredPane;
+
 
     // common GUI
     public GUI(){
@@ -31,6 +31,12 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
         this.setLocationRelativeTo(null);
         this.setLayout(null);
         this.getContentPane().setBackground(Color.pink);
+
+        // pane
+        layeredPane = new JLayeredPane();
+        layeredPane.setPreferredSize(new Dimension(960, 720));
+        layeredPane.setBounds(0,0,960,720);
+        this.add(layeredPane);
 
         // create menu buttons
         bStart = new JButton ("Start");
@@ -65,6 +71,11 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
         lChar1.setFont(f2);
         lChar1.setForeground(Color.WHITE);
 
+        // background
+        background = new JLabel();
+        background.setBounds(0, 0, 960, 720);
+        background.setLayout(null);
+
         ingamegui();
     }
 
@@ -76,37 +87,29 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
             this.setTitle(g.getgamename());
 
             // remove menu buttons
-            this.remove(bStart);
-            this.remove(bEditor);
-            this.remove(bInfo);
+            layeredPane.remove(bStart);
+            layeredPane.remove(bEditor);
+            layeredPane.remove(bInfo);
 
             // add ingame elements
-            //this.add(background);
-            //background.add(tpDialog);
-            //background.add(lChar1);
-
-            this.add(tpDialog);
-            this.add(lChar1);
+            layeredPane.add(background,new Integer(0));
+            layeredPane.add(tpDialog,new Integer(1));
+            layeredPane.add(lChar1,new Integer(1));
         }
         // menu GUI
         else {
             // remove ingame components
-            this.remove(tpDialog);
-            this.remove(lChar1);
+            layeredPane.remove(tpDialog);
+            layeredPane.remove(lChar1);
+            layeredPane.remove(background);
 
             // Menu title
             this.setTitle("lonegine");
 
             // add all the menu buttons
-            this.add(bStart);
-            this.add(bEditor);
-            this.add(bInfo);
-
-            // set background
-            Graphics2D g2d = imgBG.createGraphics();
-            g2d.setPaint (Color.PINK);
-            g2d.fillRect (0, 0, imgBG.getWidth(), imgBG.getHeight());
-            g2d.dispose();
+            layeredPane.add(bStart,new Integer(1));
+            layeredPane.add(bEditor,new Integer(1));
+            layeredPane.add(bInfo,new Integer(1));
         }
         // repaint after changing GUI
         this.repaint();
@@ -136,8 +139,6 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
         }
         else {
             // switch back to menu
-            // remove ingame components
-            // this.remove(background);
             ingame = false;
             ingamegui();
         }
@@ -145,23 +146,20 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
 
     // load the next "slide"
     public void next() {
-        imgBG = g.combineimg();
-
         // Background
-        //background = new JLabel(new ImageIcon(g.combineimg()));
-        //background.setBounds(0, 0, 960, 720);
-        //background.setLayout(null);
+        background = new JLabel(new ImageIcon(g.combineimg()));
 
+        // dialog
         tpDialog.setText(g.storytext());
         lChar1.setText(g.getcharname());
 
         this.repaint();
     }
 
-    public void paint(Graphics gr) {
-        // Draws the img to the BackgroundPanel.
-        gr.drawImage(imgBG, 0, 0, null);
-    }
+    //public void paint(Graphics gr) {
+    //    // Draws the img to the BackgroundPanel.
+    //    gr.drawImage(imgBG, 0, 0, null);
+    //}
 
     // Infobox for credits and stuff
     public void infobox(String titleBar, String infoMessage) {
