@@ -21,7 +21,7 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
     private JLabel lChar1, background;
 
     // Image
-    private BufferedImage imgBG;
+    private BufferedImage imgBG = new BufferedImage(960,720,BufferedImage.TYPE_INT_ARGB);
 
     // common GUI
     public GUI(){
@@ -30,6 +30,7 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setLayout(null);
+        this.getContentPane().setBackground(Color.pink);
 
         // create menu buttons
         bStart = new JButton ("Start");
@@ -89,12 +90,23 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
         }
         // menu GUI
         else {
+            // remove ingame components
+            this.remove(tpDialog);
+            this.remove(lChar1);
+
             // Menu title
             this.setTitle("lonegine");
+
             // add all the menu buttons
             this.add(bStart);
             this.add(bEditor);
             this.add(bInfo);
+
+            // set background
+            Graphics2D g2d = imgBG.createGraphics();
+            g2d.setPaint (Color.PINK);
+            g2d.fillRect (0, 0, imgBG.getWidth(), imgBG.getHeight());
+            g2d.dispose();
         }
         // repaint after changing GUI
         this.repaint();
@@ -125,15 +137,16 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
         else {
             // switch back to menu
             // remove ingame components
-            this.remove(background);
+            // this.remove(background);
             ingame = false;
             ingamegui();
         }
     }
 
     // load the next "slide"
-    public void next(){
+    public void next() {
         imgBG = g.combineimg();
+
         // Background
         //background = new JLabel(new ImageIcon(g.combineimg()));
         //background.setBounds(0, 0, 960, 720);
@@ -145,14 +158,9 @@ public class GUI extends JFrame implements ActionListener, MouseListener {
         this.repaint();
     }
 
-    public void paint(Graphics g) {
+    public void paint(Graphics gr) {
         // Draws the img to the BackgroundPanel.
-        if (ingame) {
-            g.drawImage(imgBG, 0, 0, null);
-        }
-        else {
-            this.getContentPane().setBackground(Color.pink);
-        }
+        gr.drawImage(imgBG, 0, 0, null);
     }
 
     // Infobox for credits and stuff

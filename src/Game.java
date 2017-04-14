@@ -17,7 +17,7 @@ public class Game {
 		// splits and fills text into story label.
 		public String storytext() {
 			String result = "";
-
+			end = false;
 			// check if character is still talking
 			if (stilltalking) {
 				if (m.find()) {
@@ -50,7 +50,6 @@ public class Game {
 					result = m.group(1);
 				}
 			}
-
 			return result;
 		}
 
@@ -59,6 +58,7 @@ public class Game {
 			nxtnr = Integer.parseInt(sql.selectstory(nr, "nextnr"));
 			if (nxtnr == 9999) {
 				end = true;
+				nr = 1;
 			}
 			else {
 				nr = nxtnr;
@@ -79,7 +79,7 @@ public class Game {
 			return sql.selectcharacter(charid, "name");
 		}
 
-		// not working yet
+		// not working as expected: doesnt set char1 with other char
 		// combine sprites and background
 		public BufferedImage combineimg(){
 			// background
